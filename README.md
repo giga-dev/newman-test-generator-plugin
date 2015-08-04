@@ -1,0 +1,1 @@
+# Newman Tests Generator Maven Plugin
