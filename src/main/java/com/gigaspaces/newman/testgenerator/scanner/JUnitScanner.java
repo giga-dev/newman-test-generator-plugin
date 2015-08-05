@@ -2,7 +2,6 @@ package com.gigaspaces.newman.testgenerator.scanner;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.junit.Test;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.ResourcesScanner;
@@ -23,14 +22,24 @@ public class JUnitScanner extends AbstractNewmanScanner {
 
 
     @Override
-    public JSONObject scanAndGet(String type, FilterBuilder filter, Set<URL> urls) {
+    public boolean isFilteredByAnnotations(JSONObject annotations) {
+        return false;
+    }
+
+    @Override
+    public Class getTestAnnotationClass() {
+        return org.junit.Test.class;
+    }
+
+    @Override
+    public JSONObject scanAndGet(String type, FilterBuilder filter, Set<URL> urls) throws Exception {
         Reflections reflections = new Reflections(
                 new ConfigurationBuilder().
                         setScanners(new SubTypesScanner(false), new MethodAnnotationsScanner(), new ResourcesScanner()).
                         filterInputsBy(filter).
                         setUrls(urls));
 
-        Set<Method> methods = reflections.getMethodsAnnotatedWith(Test.class);
+        Set<Method> methods = reflections.getMethodsAnnotatedWith(getTestAnnotationClass());
 
         JSONArray testsJSON = scanMethods(methods);
         System.out.println("Type: " + type+", Total methods: "+methods.size());

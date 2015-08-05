@@ -19,9 +19,13 @@ import java.util.Set;
  */
 public abstract class AbstractNewmanScanner {
 
-    public abstract JSONObject scanAndGet(String type, FilterBuilder filter, Set<URL> urls);
+    public abstract boolean isFilteredByAnnotations(JSONObject annotations);
 
-    public JSONArray scanMethods(Set<Method> methods) {
+    public abstract Class getTestAnnotationClass();
+
+    public abstract JSONObject scanAndGet(String type, FilterBuilder filter, Set<URL> urls) throws Exception;
+
+    public JSONArray scanMethods(Set<Method> methods) throws Exception {
         JSONArray testsArray = new JSONArray();
         int count=0;
         for (Method testMethod : methods) {
@@ -34,10 +38,15 @@ public abstract class AbstractNewmanScanner {
             test.put("arguments", testPermutations);
 
             try {
-                JSONObject annotations = getTestMethodAnnotations(testMethod);
+                JSONObject annotations = getTestMethodAnnotations(testMethod,getTestAnnotationClass());
+                if (isFilteredByAnnotations(annotations)) {
+                    continue;
+                }
+                count++;
                 test.put("annotations", annotations);
             } catch (Exception e) {
                 System.out.println("Failed to load method annotations " + e);
+                throw new Exception("Failed to load method annotations", e);
             }
             testsArray.add(test);
 
@@ -79,38 +88,37 @@ public abstract class AbstractNewmanScanner {
         }
         return toPut;
     }
-    /*private JSONObject getTestMethodAnnotations2(Method m) throws InvocationTargetException, IllegalAccessException {
+    private JSONObject getTestMethodAnnotations(Method m, Class testClass) throws Exception {
         JSONObject annotations = new JSONObject();
         Class klass = m.getDeclaringClass();
         while (klass != null && klass != Object.class) {
             try {
-                Method method = klass.getMethod(m.getName());
-                if (!method.isAnnotationPresent(org.testng.annotations.Test.class)) {
+                Method method = klass.getDeclaredMethod(m.getName(), m.getParameterTypes());
+                if (!method.isAnnotationPresent(testClass)) {
                     klass = klass.getSuperclass();
                     continue;
                 }
                 for (Annotation a : method.getDeclaredAnnotations()) {
                     Method[] declaredMethods = a.annotationType().getDeclaredMethods();
-                    JSONObject annotation = new JSONObject();
                     for (Method declaredMethod : declaredMethods) {
                         try {
                             Object value = declaredMethod.invoke(a);
                             Object toPut = annotationValueToString(value);
-                            annotation.put(declaredMethod.getName(), toPut);
+                            annotations.put(a.annotationType().getName() + "." +declaredMethod.getName(), toPut);
                         } catch (Exception e) {
                             e.printStackTrace();
                             return annotations;
                         }
                     }
-                    annotations.put(a.annotationType().getName(), annotation);
                 }
+                return annotations;
             } catch (Exception e) {
-                break;
+                e.printStackTrace();
+                throw new Exception("Failed to retrieve method annotations",e );
             }
-            klass = klass.getSuperclass();
         }
         return annotations;
-    }*/
+    }
 
 /*    private Object annotationValueToString(Object value) {
         if (value instanceof Class) {
