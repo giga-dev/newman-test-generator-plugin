@@ -111,16 +111,18 @@ public class NewmanTestGeneratorMojo extends AbstractMojo {
             if (includeSources) {
                 Classpath classpath = new Classpath(Arrays.asList(classesDirectory.getAbsolutePath()));
                 ClassLoader cl = classpath.createClassLoader();
-                urls.addAll(ClasspathHelper.forClassLoader(cl));
-                runtimeClasspathElementsUrlsList.addAll(ClasspathHelper.forClassLoader(cl));
+                Collection<URL> classPathUrls = ClasspathHelper.forClassLoader(cl);
+                urls.addAll(classPathUrls);
+                runtimeClasspathElementsUrlsList.addAll(classPathUrls);
             }
 
 
             if (includeTests) {
                 Classpath classpath = new Classpath(Arrays.asList(testClassesDirectory.getAbsolutePath()));
                 ClassLoader cl = classpath.createClassLoader();
-                urls.addAll(ClasspathHelper.forClassLoader(cl));
-                runtimeClasspathElementsUrlsList.addAll(ClasspathHelper.forClassLoader(cl));
+                Collection<URL> classPathUrls = ClasspathHelper.forClassLoader(cl);
+                urls.addAll(classPathUrls);
+                runtimeClasspathElementsUrlsList.addAll(classPathUrls);
             }
 
             {
@@ -131,8 +133,9 @@ public class NewmanTestGeneratorMojo extends AbstractMojo {
                         if (file != null) {
                             Classpath classpath = new Classpath(Arrays.asList(file.getPath()));
                             ClassLoader cl = classpath.createClassLoader();
-                            urls.addAll(ClasspathHelper.forClassLoader(cl));
-                            runtimeClasspathElementsUrlsList.addAll(ClasspathHelper.forClassLoader(cl));
+                            Collection<URL> classPathUrls = ClasspathHelper.forClassLoader(cl);
+                            urls.addAll(classPathUrls);
+                            runtimeClasspathElementsUrlsList.addAll(classPathUrls);
                         }
                     }
                 }
