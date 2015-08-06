@@ -11,7 +11,6 @@ import org.reflections.util.FilterBuilder;
 
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -23,7 +22,7 @@ public class JUnitScanner extends AbstractNewmanScanner {
 
     @Override
     public boolean isFilteredByAnnotations(JSONObject annotations) {
-        return false;
+        return annotations.containsKey("org.junit.Ignore.value");
     }
 
     @Override
