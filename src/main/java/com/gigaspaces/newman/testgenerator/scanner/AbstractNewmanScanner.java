@@ -51,7 +51,7 @@ public abstract class AbstractNewmanScanner {
             testsArray.add(test);
 
         }
-        System.out.println("Total enabled: "+count);
+        System.out.println("Total enabled test methods: "+count);
         return testsArray;
     }
 

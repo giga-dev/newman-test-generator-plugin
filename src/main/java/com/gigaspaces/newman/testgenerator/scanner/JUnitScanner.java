@@ -40,8 +40,9 @@ public class JUnitScanner extends AbstractNewmanScanner {
 
         Set<Method> methods = reflections.getMethodsAnnotatedWith(getTestAnnotationClass());
 
+        System.out.println("Total methods: " + methods.size());
         JSONArray testsJSON = scanMethods(methods);
-        System.out.println("Type: " + type+", Total methods: "+methods.size());
+        System.out.println("Type: " + type);
         JSONObject object = new JSONObject();
         object.put("type", type);
         object.put("tests", testsJSON);

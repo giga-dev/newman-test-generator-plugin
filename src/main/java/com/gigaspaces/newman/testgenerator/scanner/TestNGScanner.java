@@ -64,7 +64,7 @@ public class TestNGScanner extends AbstractNewmanScanner {
             }
         }
 
-        System.out.println("Total: " + methods.size());
+        System.out.println("Total methods: " + methods.size());
         JSONArray testsJSON = scanMethods(methods);
         System.out.println("Type: " + type);
         JSONObject object = new JSONObject();

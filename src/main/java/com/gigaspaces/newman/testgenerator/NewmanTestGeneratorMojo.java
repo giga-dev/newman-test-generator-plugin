@@ -151,6 +151,7 @@ public class NewmanTestGeneratorMojo extends AbstractMojo {
 
         } catch (Exception e) {
             logger.error(e);
+            throw new org.apache.maven.plugin.MojoExecutionException("Failed to run tests generator", e);
         }
     }
 
