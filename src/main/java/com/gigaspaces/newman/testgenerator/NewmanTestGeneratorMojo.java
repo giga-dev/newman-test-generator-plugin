@@ -134,7 +134,7 @@ public class NewmanTestGeneratorMojo extends AbstractMojo {
                             Classpath classpath = new Classpath(Arrays.asList(file.getPath()));
                             ClassLoader cl = classpath.createClassLoader();
                             Collection<URL> classPathUrls = ClasspathHelper.forClassLoader(cl);
-                            urls.addAll(classPathUrls);
+                            //TODO remove if not necessary //urls.addAll(classPathUrls);
                             runtimeClasspathElementsUrlsList.addAll(classPathUrls);
                         }
                     }
