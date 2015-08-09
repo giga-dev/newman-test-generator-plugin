@@ -10,7 +10,9 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -38,7 +40,30 @@ public class JUnitScanner extends AbstractNewmanScanner {
                         filterInputsBy(filter).
                         setUrls(urls));
 
-        Set<Method> methods = reflections.getMethodsAnnotatedWith(getTestAnnotationClass());
+        Set<Method> methods = new HashSet<Method>();
+        Set<Class<?>> classes = reflections.getSubTypesOf(Object.class);
+        for (Class clazz : classes) {
+            if (Modifier.isAbstract(clazz.getModifiers())) {
+                continue;
+            }
+
+            Method[] methods1 = clazz.getDeclaredMethods();
+            for (Method method : methods1) {
+                Class klass = clazz;
+                while (klass != Object.class && klass != null) {
+                    try {
+                        Method klassMethod = klass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+                        if (klassMethod.isAnnotationPresent(getTestAnnotationClass())) {
+                            methods.add(method);
+                            break;
+                        }
+                    } catch (NoSuchMethodException e) {
+                        break;
+                    }
+                    klass = klass.getSuperclass();
+                }
+            }
+        }
 
         System.out.println("Total methods: " + methods.size());
         JSONArray testsJSON = scanMethods(methods);
