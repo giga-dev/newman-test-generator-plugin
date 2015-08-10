@@ -21,7 +21,7 @@ import java.util.*;
  * @author Yohana Khoury
  * @goal generate
  * @requiresProject true
- * @requiresDependencyResolution compile
+ * @requiresDependencyResolution test
  */
 public class NewmanTestGeneratorMojo extends AbstractMojo {
 
